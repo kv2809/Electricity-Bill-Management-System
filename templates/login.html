@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Electricity Bill Management System</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-page">
+
+<header>
+    <h1>Electricity Bill Management System</h1>
+    <p>Secure access for administrators and customers</p>
+</header>
+
+<main class="login-main">
+    <section class="card login-card">
+        <h2>Welcome</h2>
+        <p class="login-description">
+            Select your account type and enter your login details.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <form action="{{ url_for('process_login') }}" method="post">
+            <label for="role">Login As</label>
+            <select id="role" name="role" required>
+                <option value="admin">Administrator</option>
+                <option value="customer" selected>Customer</option>
+            </select>
+
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                autocomplete="username"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit" class="login-button">
+                Log In
+            </button>
+        </form>
+
+        <p class="login-note">
+            Customer accounts are created by the administrator.
+        </p>
+    </section>
+</main>
+
+</body>
+</html>

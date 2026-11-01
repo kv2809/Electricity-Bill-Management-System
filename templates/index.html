@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Electricity Bill Management</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Electricity Bill Management System</h1>
+    <p>Admin Dashboard — Manage Customers, Bills and Payments</p>
+</header>
+
+<main>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="messages">
+                {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
+    <!-- Register Customer -->
+    <section class="card">
+        <h2>Register New Customer</h2>
+
+        <form action="{{ url_for('add_customer') }}"
+              method="POST"
+              class="form-grid">
+
+            <div>
+                <label for="name">Customer Name</label>
+                <input type="text"
+                       id="name"
+                       name="name"
+                       placeholder="Enter customer name"
+                       required>
+            </div>
+
+            <div>
+                <label for="username">Username</label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       placeholder="Create login username"
+                       required>
+            </div>
+
+            <div>
+                <label for="password">Password</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Create customer password"
+                       required>
+            </div>
+
+            <div>
+                <label for="address">Address</label>
+                <input type="text"
+                       id="address"
+                       name="address"
+                       placeholder="Enter customer address"
+                       required>
+            </div>
+
+            <div>
+                <label for="phone">Phone Number</label>
+                <input type="tel"
+                       id="phone"
+                       name="phone"
+                       placeholder="Enter phone number">
+            </div>
+
+            <div class="form-button">
+                <button type="submit">Register Customer</button>
+            </div>
+
+        </form>
+    </section>
+
+
+    <!-- Generate Bill -->
+    <section class="card">
+        <h2>Generate Monthly Electricity Bill</h2>
+
+        <form action="{{ url_for('add_bill') }}"
+              method="POST"
+              class="form-grid">
+
+            <div>
+                <label for="customer_id">Select Customer</label>
+
+                <select id="customer_id"
+                        name="customer_id"
+                        required>
+
+                    <option value="">-- Select Customer --</option>
+
+                    {% for customer in customers %}
+                        <option value="{{ customer.id }}">
+                            {{ customer.name }} (ID: {{ customer.id }})
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div>
+                <label for="billing_month">Billing Month</label>
+                <input type="month"
+                       id="billing_month"
+                       name="billing_month"
+                       required>
+            </div>
+
+            <div>
+                <label for="units">Units Consumed (kWh)</label>
+                <input type="number"
+                       id="units"
+                       name="units"
+                       min="0"
+                       step="1"
+                       placeholder="Enter units consumed"
+                       required>
+            </div>
+
+            <div class="form-button">
+                <button type="submit">Generate Bill</button>
+            </div>
+
+        </form>
+
+        <p>
+            <strong>Billing Slabs:</strong>
+            First 100 units: ₹3/unit;
+            next 100 units: ₹5/unit;
+            next 300 units: ₹7/unit;
+            above 500 units: ₹8/unit.
+        </p>
+    </section>
+
+
+    <!-- Registered Customers -->
+    <section class="card">
+        <h2>Registered Customers</h2>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Bill History</th>
+                        <th>Delete Customer</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.id }}</td>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.username }}</td>
+                        <td>{{ customer.address }}</td>
+                        <td>{{ customer.phone or '-' }}</td>
+
+                        <td class="actions">
+                            <a href="{{ url_for(
+                                'customer_bill_history',
+                                customer_id=customer.id
+                            ) }}">
+                                <button type="button">
+                                    View Bill History
+                                </button>
+                            </a>
+                        </td>
+
+                        <td class="actions">
+                            <form action="{{ url_for(
+                                'delete_customer',
+                                customer_id=customer.id
+                            ) }}"
+                            method="POST"
+                            onsubmit="return confirm(
+                                'WARNING: Permanently delete {{ customer.name | e }} and ALL their records, including unpaid bills, paid bills, and bill history? This action cannot be undone.'
+                            );">
+
+                                <button type="submit"
+                                        class="delete-button">
+                                    Delete Customer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            No customers have been registered yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
+    <!-- Bills Due -->
+    <section class="card">
+        <h2>Bills Due</h2>
+        <p>Manage unpaid bills, download invoices and update payment status.</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Customer</th>
+                        <th>Billing Month</th>
+                        <th>Units (kWh)</th>
+                        <th>Bill Amount (₹)</th>
+                        <th>Payment Status</th>
+                        <th>Actions</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>{{ bill.id }}</td>
+                        <td>{{ bill.name }}</td>
+                        <td>{{ bill.billing_month }}</td>
+                        <td>{{ bill.units }}</td>
+                        <td>{{ "%.2f"|format(bill.bill_amount) }}</td>
+
+                        <td>
+                            <span class="{{ 'paid' if bill.payment_status == 'Paid' else 'unpaid' }}">
+                                {{ bill.payment_status }}
+                            </span>
+                        </td>
+
+                        <td class="actions">
+                            {% if bill.payment_status != 'Paid' %}
+                            <form action="{{ url_for(
+                                'mark_paid',
+                                bill_id=bill.id
+                            ) }}" method="POST">
+                                <button type="submit">
+                                    Mark Paid
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            <form action="{{ url_for(
+                                'delete_bill',
+                                bill_id=bill.id
+                            ) }}"
+                            method="POST"
+                            onsubmit="return confirm('Are you sure you want to delete this bill?');">
+
+                                <button type="submit"
+                                        class="delete-button">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+
+                        <td>
+                            <a href="{{ url_for(
+                                'download_bill_pdf',
+                                bill_id=bill.id
+                            ) }}">
+                                <button type="button">
+                                    Download PDF
+                                </button>
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="8">
+                            There are no bills due at the moment.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
+    <!-- Logout -->
+    <div class="logout-bottom">
+        <a href="{{ url_for('logout') }}">
+            <button type="button" class="logout-button">
+                Logout
+            </button>
+        </a>
+    </div>
+
+</main>
+
+</body>
+</html>

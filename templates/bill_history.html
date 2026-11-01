@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill History | Electricity Bill Management</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Customer Bill History</h1>
+    <p>Electricity Bill Management System</p>
+</header>
+
+<main>
+    <section class="card">
+        <h2>{{ customer.name }}</h2>
+        <p><strong>Customer ID:</strong> {{ customer.id }}</p>
+        <p><strong>Username:</strong> {{ customer.username }}</p>
+        <p><strong>Address:</strong> {{ customer.address }}</p>
+        <p><strong>Phone:</strong> {{ customer.phone or '-' }}</p>
+    </section>
+
+    <section class="card">
+        <h2>Monthly Bill History</h2>
+        <p>This table includes both paid and unpaid bills for this customer.</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Billing Month</th>
+                        <th>Units (kWh)</th>
+                        <th>Bill (₹)</th>
+                        <th>Payment Status</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>{{ bill.id }}</td>
+                        <td>{{ bill.billing_month }}</td>
+                        <td>{{ bill.units }}</td>
+                        <td>{{ "%.2f"|format(bill.bill_amount) }}</td>
+                        <td>
+                            <span class="{{ 'paid' if bill.payment_status == 'Paid' else 'unpaid' }}">
+                                {{ bill.payment_status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('download_bill_pdf', bill_id=bill.id) }}">
+                                <button type="button">Download PDF</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No bills have been generated for this customer yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="logout-bottom">
+        <a href="{{ url_for('admin_dashboard') }}">
+            <button type="button" class="logout-button">Back to Admin Dashboard</button>
+        </a>
+    </div>
+</main>
+</body>
+</html>

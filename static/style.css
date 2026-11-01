@@ -1,0 +1,289 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f6fb;
+    color: #1f2937;
+}
+
+header {
+    position: relative;
+    background: #172554;
+    color: white;
+    text-align: center;
+    padding: 28px 16px;
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+}
+
+header p {
+    margin: 0;
+    color: #dbeafe;
+}
+
+main {
+    width: 94%;
+    max-width: 1350px;
+    margin: 30px auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.07);
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    color: #172554;
+}
+
+p {
+    line-height: 1.6;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 20px 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+    background: white;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #93c5fd;
+    border-color: #2563eb;
+}
+
+button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button[type="submit"],
+.login-button {
+    background: #2563eb;
+}
+
+.logout-button {
+    background: #475569;
+    margin-top: 15px;
+}
+
+.pay-button {
+    background: #15803d;
+}
+
+.delete-button {
+    background: #dc2626;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border: 1px solid #dbe2ea;
+    text-align: left;
+}
+
+th {
+    background: #e8eef8;
+    color: #172554;
+    white-space: nowrap;
+}
+
+tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.actions {
+    white-space: nowrap;
+}
+
+.actions form {
+    display: inline-block;
+    margin: 2px;
+}
+
+.paid {
+    color: #15803d;
+    font-weight: bold;
+}
+
+.unpaid {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.success {
+    color: #166534;
+    background: #dcfce7;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.error {
+    color: #991b1b;
+    background: #fee2e2;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* Login page */
+
+.login-main {
+    max-width: 480px;
+    margin: 45px auto;
+}
+
+.login-card {
+    padding: 32px;
+}
+
+.login-description {
+    color: #64748b;
+}
+
+.login-card label {
+    margin-top: 18px;
+}
+
+.login-card input,
+.login-card select {
+    margin-bottom: 4px;
+}
+
+.login-button {
+    width: 100%;
+    margin-top: 24px;
+    font-size: 16px;
+}
+
+.login-note {
+    margin-top: 22px;
+    color: #64748b;
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width: 650px) {
+    header h1 {
+        font-size: 23px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .login-card {
+        padding: 22px;
+    }
+}
+
+/* Logout button at the bottom of both dashboards */
+.logout-bottom {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0 20px;
+    padding: 20px 0;
+}
+
+.logout-bottom form {
+    margin: 0;
+}
+
+.logout-button {
+    background-color: #dc2626;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #b91c1c;
+}
+/* Match View Bill History to the other dashboard buttons */
+.actions a button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.actions a button:hover {
+    background-color: #1d4ed8;
+}
+.logout-bottom a .logout-button {
+    background-color: #2563eb;
+    color: white;
+}
+
+.logout-bottom a .logout-button:hover {
+    background-color: #b91c1c;
+}
+
+/* Fix Download PDF button colour without changing its size */
+table td a button[type="button"] {
+    background-color: #2563eb;
+    color: white;
+}
+
+table td a button[type="button"]:hover {
+    background-color: #1d4ed8;
+}

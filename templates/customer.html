@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard | Electricity Bill Management System</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Electricity Bill Management System</h1>
+    <p>Customer Dashboard</p>
+</header>
+
+<main class="container">
+
+    <section class="card">
+        <h2>Welcome, {{ customer_name }}!</h2>
+        <p>View your unpaid bills and complete monthly bill history below.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+    </section>
+
+    <!-- BILLS DUE -->
+    <section class="card">
+        <h2>Bills Due</h2>
+        <p>This section shows bills that have not yet been paid.</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Billing Month</th>
+                        <th>Units Consumed (kWh)</th>
+                        <th>Bill Amount (₹)</th>
+                        <th>Payment Status</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills_due %}
+                    <tr>
+                        <td>{{ bill.id }}</td>
+                        <td>{{ bill.billing_month }}</td>
+                        <td>{{ bill.units }}</td>
+                        <td>{{ "%.2f"|format(bill.bill_amount) }}</td>
+                        <td>
+                            <span class="unpaid">
+                                {{ bill.payment_status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('download_bill_pdf', bill_id=bill.id) }}">
+                                <button type="button">Download PDF</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">You have no bills due.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- BILL HISTORY -->
+    <section class="card">
+        <h2>Bill History</h2>
+        <p>This section includes all your monthly bills, both paid and unpaid.</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Billing Month</th>
+                        <th>Units Consumed (kWh)</th>
+                        <th>Bill Amount (₹)</th>
+                        <th>Payment Status</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>{{ bill.id }}</td>
+                        <td>{{ bill.billing_month }}</td>
+                        <td>{{ bill.units }}</td>
+                        <td>{{ "%.2f"|format(bill.bill_amount) }}</td>
+                        <td>
+                            <span class="{{ 'paid' if bill.payment_status == 'Paid' else 'unpaid' }}">
+                                {{ bill.payment_status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('download_bill_pdf', bill_id=bill.id) }}">
+                                <button type="button">Download PDF</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No monthly electricity bills found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- LOGOUT AT BOTTOM -->
+    <div class="logout-bottom">
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+
+</main>
+</body>
+</html>
